@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import signIn from "./firebase/auth/signin";
 import { useRouter } from 'next/navigation'
 import signUp from "./firebase/auth/signup";
@@ -9,8 +9,16 @@ import { AuthContext } from "./context/AuthContext";
 function Page() {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
+    const [data, setData] = React.useState(null)
     const router = useRouter()
     const { user } = useContext(AuthContext)
+
+    useEffect(() => {
+        if (user) {
+            user
+        }
+    }, [user])
+
     const handleSignup = async (event) => {
         event.preventDefault()
 
@@ -48,6 +56,7 @@ function Page() {
         // else successful
         console.log(result)
     }
+
     return (<div className="wrapper">
         <div>Your email is {user?.email ? user.email : 'Not signed in'}</div>
         <div>Your uid is {user?.uid ? user.uid : 'Not signed in'}</div>
