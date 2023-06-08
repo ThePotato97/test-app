@@ -21,7 +21,8 @@
 ### Run Locally
 
 ```
-$ yarn dev
+$ pnpm install
+$ pnpm run dev
 ```
 
 Your app is available at http://localhost:3000.
