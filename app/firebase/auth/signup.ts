@@ -1,6 +1,12 @@
 import firebase_app from '../config';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  setDoc
+} from 'firebase/firestore';
 
 const auth = getAuth(firebase_app);
 
@@ -10,10 +16,12 @@ export default async function signUp(email, password) {
     error = null;
   try {
     result = await createUserWithEmailAndPassword(auth, email, password);
-    await addDoc(collection(db, 'users'), {
+    const docRef = doc(db, 'users', result.user.uid);
+    await setDoc(docRef, {
       email: email,
       uid: result.user.uid,
-      role: 'user'
+      role: 'user',
+      userdata: []
     });
   } catch (e) {
     error = e;

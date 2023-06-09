@@ -5,18 +5,25 @@ import { useRouter } from 'next/navigation'
 import signUp from "./firebase/auth/signup";
 import signOut from "./firebase/auth/signout";
 import { AuthContext } from "./context/AuthContext";
+import { arrayUnion, collection, doc, getDocs, getDoc, getFirestore, updateDoc, onSnapshot } from "firebase/firestore";
+import firebase_app from "./firebase/config";
 
 function Page() {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [data, setData] = React.useState(null)
-    const router = useRouter()
+    const [text, setText] = React.useState('')
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
-        if (user) {
-            user
-        }
+        if (!user) return
+        const db = getFirestore(firebase_app);
+        const userRef = doc(db, "users", user.uid);
+        const unsub = onSnapshot(userRef, (doc) => {
+            const newData = doc.data()
+            setData(newData.userdata)
+        });
+        return unsub
     }, [user])
 
     const handleSignup = async (event) => {
@@ -57,6 +64,17 @@ function Page() {
         console.log(result)
     }
 
+    const handleAddTest = async (event) => {
+        event.preventDefault()
+        const db = getFirestore(firebase_app);
+        const userRef = doc(db, "users", user.uid)
+
+        await updateDoc(userRef, {
+            userdata: arrayUnion({ name: text })
+        })
+        setText('')
+    }
+
     return (<div className="wrapper">
         <div>Your email is {user?.email ? user.email : 'Not signed in'}</div>
         <div>Your uid is {user?.uid ? user.uid : 'Not signed in'}</div>
@@ -75,6 +93,13 @@ function Page() {
                 <button onClick={handleLogin} type="submit">Login</button>
                 <button onClick={handleLogout} type="submit">Sign out</button>
             </form>
+            <input onChange={(e) => setText(e.target.value)} required type="text" name="text" id="text" placeholder="text" />
+            <button onClick={handleAddTest}>Add Test</button>
+            {
+                data && data.map((item, index) => {
+                    return <div key={index}>{JSON.stringify(item)}</div>
+                })
+            }
         </div>
 
     </div>);
