@@ -7,7 +7,7 @@ const provider = new GoogleAuthProvider();
 
 const auth = getAuth(firebase_app);
 
-export default async function signIn(email, password) {
+export default async function signIn(email: string, password: string) {
   let cred = null,
     error = null;
   try {
