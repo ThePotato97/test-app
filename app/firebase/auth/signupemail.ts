@@ -1,5 +1,9 @@
 import firebase_app from '../config';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider
+} from 'firebase/auth';
 import {
   addDoc,
   collection,
@@ -10,7 +14,7 @@ import {
 
 const auth = getAuth(firebase_app);
 
-export default async function signUp(email, password) {
+export default async function signUp(email: string, password: string) {
   const db = getFirestore(firebase_app);
   let result = null,
     error = null;

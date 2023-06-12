@@ -2,16 +2,17 @@
 import React, { useContext, useEffect } from "react";
 import signIn from "./firebase/auth/signin";
 import { useRouter } from 'next/navigation'
-import signUp from "./firebase/auth/signup";
+import signUp from "./firebase/auth/signupemail";
 import signOut from "./firebase/auth/signout";
 import { AuthContext } from "./context/AuthContext";
-import { arrayUnion, collection, doc, getDocs, getDoc, getFirestore, updateDoc, onSnapshot } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDocs, getDoc, getFirestore, updateDoc, onSnapshot, DocumentData } from "firebase/firestore";
 import firebase_app from "./firebase/config";
+import { authWithGoogle } from "./firebase/auth/google";
 
 function Page() {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
-    const [data, setData] = React.useState(null)
+    const [data, setData] = React.useState<Array<string>>([])
     const [text, setText] = React.useState('')
     const { user } = useContext(AuthContext)
 
@@ -21,12 +22,13 @@ function Page() {
         const userRef = doc(db, "users", user.uid);
         const unsub = onSnapshot(userRef, (doc) => {
             const newData = doc.data()
+            if (!newData) return;
             setData(newData.userdata)
         });
         return unsub
     }, [user])
 
-    const handleSignup = async (event) => {
+    const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         const { result, error } = await signUp(email, password);
@@ -38,7 +40,7 @@ function Page() {
         // else successful
         console.log(result)
     }
-    const handleLogin = async (event) => {
+    const handleLogin = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
 
         const { result, error } = await signIn(email, password);
@@ -51,7 +53,7 @@ function Page() {
         console.log(result)
 
     }
-    const handleLogout = async (event) => {
+    const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
 
         const { result, error } = await signOut();
@@ -64,7 +66,12 @@ function Page() {
         console.log(result)
     }
 
-    const handleAddTest = async (event) => {
+    const handleGoogleAuth = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault()
+        const result = await authWithGoogle()
+    }
+
+    const handleAddTest = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         const db = getFirestore(firebase_app);
         const userRef = doc(db, "users", user.uid)
@@ -79,7 +86,8 @@ function Page() {
         <div>Your email is {user?.email ? user.email : 'Not signed in'}</div>
         <div>Your uid is {user?.uid ? user.uid : 'Not signed in'}</div>
         <div className="form-wrapper">
-            <h1 className="mt-60 mb-30">Sign up</h1>
+            <h1>Test Firebase</h1>
+            <h1>Sign up</h1>
             <form onSubmit={handleSignup} className="form">
                 <label htmlFor="email">
                     <p>Email</p>
@@ -91,6 +99,7 @@ function Page() {
                 </label>
                 <button type="submit">Sign up</button>
                 <button onClick={handleLogin} type="submit">Login</button>
+                <button onClick={handleGoogleAuth} type="submit">Google Auth</button>
                 <button onClick={handleLogout} type="submit">Sign out</button>
             </form>
             <input onChange={(e) => setText(e.target.value)} required type="text" name="text" id="text" placeholder="text" />
