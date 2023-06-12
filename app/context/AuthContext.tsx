@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
     onAuthStateChanged,
     getAuth,
@@ -9,17 +9,21 @@ import { User as FirebaseUser } from "firebase/auth";
 const auth = getAuth(firebase_app);
 
 interface AuthContextInterface {
-    user: FirebaseUser;
+    user: FirebaseUser | null;
 }
 
 export const AuthContext = React.createContext({} as AuthContextInterface);
 
 export const useAuthContext = () => React.useContext(AuthContext);
 
+interface AuthContextProviderProps {
+    children: ReactNode;
+}
+
 export const AuthContextProvider = ({
     children,
-}) => {
-    const [user, setUser] = React.useState(null);
+}: AuthContextProviderProps) => {
+    const [user, setUser] = React.useState<FirebaseUser | null>(null);
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {

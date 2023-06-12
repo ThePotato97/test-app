@@ -1,7 +1,12 @@
 'use client'
+import { ReactNode } from 'react';
 import { AuthContextProvider } from './context/AuthContext'
 
-export default function RootLayout({ children }) {
+type RootLayoutProps = {
+  children: ReactNode;
+};
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       {/*

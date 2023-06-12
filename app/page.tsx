@@ -72,6 +72,7 @@ function Page() {
     }
 
     const handleAddTest = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!user) return
         event.preventDefault()
         const db = getFirestore(firebase_app);
         const userRef = doc(db, "users", user.uid)
