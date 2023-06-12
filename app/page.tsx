@@ -17,7 +17,7 @@ function Page() {
     const { user } = useContext(AuthContext)
 
     useEffect(() => {
-        if (!user) return
+        if (!user) return setData([])
         const db = getFirestore(firebase_app);
         const userRef = doc(db, "users", user.uid);
         const unsub = onSnapshot(userRef, (doc) => {
@@ -103,13 +103,15 @@ function Page() {
                     :
                     <button onClick={handleLogout} type="submit">Sign out</button>}
             </form>
-            <input onChange={(e) => setText(e.target.value)} required type="text" name="text" id="text" placeholder="text" />
-            <button onClick={handleAddTest}>Add Test</button>
-            {
-                data && data.map((item, index) => {
-                    return <div key={index}>{JSON.stringify(item)}</div>
-                })
-            }
+            {user && (
+                <>
+                    <input onChange={(e) => setText(e.target.value)} required type="text" name="text" id="text" placeholder="text" />
+                    <button onClick={handleAddTest}>Add Test</button>
+                </>
+            )}
+            {data && data.map((item, index) => {
+                return <div key={index}>{JSON.stringify(item)}</div>
+            })}
         </div>
 
     </div>);
