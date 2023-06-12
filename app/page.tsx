@@ -98,10 +98,10 @@ function Page() {
                     <p>Password</p>
                     <input onChange={(e) => setPassword(e.target.value)} required type="password" name="password" id="password" placeholder="password" />
                 </label>
-                <button type="submit">Sign up</button>
-                <button onClick={handleLogin} type="submit">Login</button>
-                <button onClick={handleGoogleAuth} type="submit">Google Auth</button>
-                <button onClick={handleLogout} type="submit">Sign out</button>
+                {!user ?
+                    <><button type="submit">Sign up</button><button onClick={handleLogin} type="submit">Login</button><button onClick={handleGoogleAuth} type="submit">Google Auth</button></>
+                    :
+                    <button onClick={handleLogout} type="submit">Sign out</button>}
             </form>
             <input onChange={(e) => setText(e.target.value)} required type="text" name="text" id="text" placeholder="text" />
             <button onClick={handleAddTest}>Add Test</button>
